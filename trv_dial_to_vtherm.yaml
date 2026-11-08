@@ -1,0 +1,70 @@
+blueprint:
+  name: TRV dial to Versatile Thermostat
+  author: m0g3ns
+  description: >
+    Carries a manual setpoint change made on the TRV itself (dial or buttons)
+    over to the Versatile Thermostat that controls it.
+
+
+    Built for Versatile Thermostat `over_climate` entities using self-regulation
+    **Direct control of valve** (e.g. Sonoff TRVZB). In that mode the TRV's own
+    setpoint is ignored for heating, so a dial change would otherwise have no
+    effect.
+
+
+    Create one automation from this blueprint per TRV. If several TRVs belong to
+    one Versatile Thermostat, create one instance per TRV and point them all at
+    the same Versatile Thermostat.
+  domain: automation
+  source_url: https://github.com/m0g3ns/ha-trv-dial-to-vtherm/blob/main/trv_dial_to_vtherm.yaml
+  homeassistant:
+    min_version: 2024.10.0
+  input:
+    trv_entity:
+      name: TRV climate entity
+      description: >
+        The climate entity of the physical TRV (the underlying device of the
+        Versatile Thermostat, e.g. from Zigbee2MQTT).
+      selector:
+        entity:
+          filter:
+            - domain: climate
+    vtherm_entity:
+      name: Versatile Thermostat entity
+      description: >
+        The Versatile Thermostat climate entity that controls this TRV.
+      selector:
+        entity:
+          filter:
+            - domain: climate
+
+mode: single
+
+variables:
+  vtherm: !input vtherm_entity
+
+triggers:
+  - trigger: state
+    entity_id: !input trv_entity
+    attribute: temperature
+
+conditions:
+  # Only act when the TRV's setpoint differs from the Versatile Thermostat's
+  # target. When VT or a scheduler changes the target, VT updates its own
+  # target first and then writes it to the TRV, so the two already match and
+  # nothing happens. Only a real dial change creates a mismatch.
+  - condition: template
+    value_template: >
+      {% set new = trigger.to_state.attributes.temperature if trigger.to_state else none %}
+      {% set vt = state_attr(vtherm, 'temperature') %}
+      {{ trigger.from_state is not none
+         and new is not none
+         and vt is not none
+         and (new | float(0)) != (vt | float(0)) }}
+
+actions:
+  - action: climate.set_temperature
+    target:
+      entity_id: !input vtherm_entity
+    data:
+      temperature: "{{ trigger.to_state.attributes.temperature }}"
