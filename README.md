@@ -2,7 +2,7 @@
 
 A Home Assistant blueprint that lets people change the temperature on the **radiator valve itself** and have that change carried over to the [Versatile Thermostat](https://github.com/jmcollin78/versatile_thermostat) (VTherm) that controls it.
 
-[![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F%3Cm0g3ns%3E%2Fha-trv-dial-to-vtherm%2Fblob%2Fmain%2Ftrv_dial_to_vtherm.yaml)
+[![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fm0g3ns%2Fha-trv-dial-to-vtherm%2Fblob%2Fmain%2Ftrv_dial_to_vtherm.yaml)
 
 ## Why this exists
 
